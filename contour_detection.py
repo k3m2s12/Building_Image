@@ -3,6 +3,7 @@ from collections.abc import Sequence
 import numpy as np
 from random import random
 
+
 def n_max(list, N):
     final_list = []
 
@@ -17,33 +18,6 @@ def n_max(list, N):
         list.remove(max)
         final_list.append(max)
     print(final_list)
-
-# 이 그리드에 대한 연구도 따로 하면 될 것 같은데....
-def best_grid_generator(contours, trial_time, grid_size):
-    contour_count_grid = []
-    centroid_list = get_centroid_list(contours)
-    top_tile = 400
-
-    for i in range(trial_time):
-        contours_in_grid = 0
-        x = int(random() * (2000 - grid_size))
-        y = int(random() * (2000 - grid_size))
-
-        for centroid in centroid_list:
-            centroid_check = [0, 0]
-            if (x <= centroid[0]) & (centroid[0] <= x+grid_size):
-                centroid_check[0] = 1
-            if (y <= centroid[1]) & (centroid[1] <= y+grid_size):
-                centroid_check[1] = 1
-            if centroid_check == [1, 1]:
-                contours_in_grid += 1
-
-        contour_count_grid.append(contours_in_grid)
-
-    n = int(len(contours) * (top_tile/100))
-    n_max(contour_count_grid, n)
-
-    return n_max
 
 
 def get_shape(lst, shape=()):
@@ -165,16 +139,6 @@ def draw_specific_contour(contours, image, num):
     cv2.destroyAllWindows()
 
 
-def get_centroid_list(contours):
-    centroid_list = []
-    for contour in contours:
-        M = cv2.moments(contour)
-        cx = int(M['m10'] / M['m00'])
-        cy = int(M['m01'] / M['m00'])
-        centroid_list.append([cx, cy])
-    return centroid_list
-
-
 def centroid_test(centroid_list, contours_before, contours_after):
     for centroid in centroid_list:
         for contour_before in contours_before:
@@ -257,6 +221,43 @@ def combined_contours_extraction(contours, true_contour_list):
         if contour_check == len(true_contour_list):
             combined_contour_list.append(contour)
     return combined_contour_list
+
+
+def best_grid_generator(contours, trial_time, grid_size):
+    contour_count_grid = []
+    centroid_list = get_centroid_list(contours)
+    top_tile = 400
+
+    for i in range(trial_time):
+        contours_in_grid = 0
+        x = int(random() * (2000 - grid_size))
+        y = int(random() * (2000 - grid_size))
+
+        for centroid in centroid_list:
+            centroid_check = [0, 0]
+            if (x <= centroid[0]) & (centroid[0] <= x + grid_size):
+                centroid_check[0] = 1
+            if (y <= centroid[1]) & (centroid[1] <= y + grid_size):
+                centroid_check[1] = 1
+            if centroid_check == [1, 1]:
+                contours_in_grid += 1
+
+        contour_count_grid.append(contours_in_grid)
+
+    n = int(len(contours) * (top_tile / 100))
+    n_max(contour_count_grid, n)
+
+    return n_max
+
+
+def get_centroid_list(contours):
+    centroid_list = []
+    for contour in contours:
+        M = cv2.moments(contour)
+        cx = int(M['m10'] / M['m00'])
+        cy = int(M['m01'] / M['m00'])
+        centroid_list.append([cx, cy])
+    return centroid_list
 
 
 ########################################################################################
